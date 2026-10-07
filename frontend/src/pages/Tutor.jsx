@@ -4,6 +4,7 @@ import ChatMessage from "../components/ChatMessage.jsx";
 import CurriculumSelector from "../components/CurriculumSelector.jsx";
 import OfflineBadge from "../components/OfflineBadge.jsx";
 import { defaultSelection } from "../data/curriculum.js";
+import { askTutor } from "../services/tutorAI.js";
 
 function formatTime(date) {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -26,7 +27,7 @@ export default function Tutor() {
   const initialSelection = location.state?.selection || defaultSelection;
   const [selection, setSelection] = useState(initialSelection);
   const [question, setQuestion] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState("idle");
   const [messages, setMessages] = useState([
     makeMessage(
       "tutor",
@@ -35,12 +36,13 @@ export default function Tutor() {
     )
   ]);
   const chatRef = useRef(null);
+  const isLoading = status === "loading";
 
   useEffect(() => {
     chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, isLoading]);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     const cleanQuestion = question.trim();
 
@@ -48,22 +50,26 @@ export default function Tutor() {
       return;
     }
 
-    setMessages((current) => [...current, makeMessage("user", "Student", cleanQuestion)]);
+    const studentQuestion = cleanQuestion;
+    setMessages((current) => [...current, makeMessage("user", "Student", studentQuestion)]);
     setQuestion("");
-    setIsLoading(true);
+    setStatus("loading");
 
-    window.setTimeout(() => {
-      // FUTURE: Connect this interface to the local on-device PathshalaAI model.
-      setMessages((current) => [
-        ...current,
-        makeMessage(
-          "tutor",
-          "Demo AI Response",
-          `Demo response: I will explain this step by step once the local PathshalaAI model is connected. Context: Class ${selection.classLevel}, ${selection.subject}, ${selection.chapter}.`
-        )
-      ]);
-      setIsLoading(false);
-    }, 700);
+    try {
+      const response = await askTutor({
+        question: studentQuestion,
+        className: selection.classLevel,
+        subject: selection.subject,
+        chapter: selection.chapter,
+      });
+
+      setMessages((current) => [...current, makeMessage("tutor", "PathshalaAI", response)]);
+      setStatus("success");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unable to generate a response.";
+      setMessages((current) => [...current, makeMessage("tutor", "PathshalaAI", errorMessage)]);
+      setStatus("error");
+    }
   }
 
   return (
@@ -97,7 +103,10 @@ export default function Tutor() {
                 Class {selection.classLevel} {selection.subject}
               </h2>
             </div>
-            <span className="chapter-pill">Chapter: {selection.chapter}</span>
+            <div className="chat-header-actions">
+              <span className="engine-status">AI Engine: Local SLM — Integration Ready</span>
+              <span className="chapter-pill">Chapter: {selection.chapter}</span>
+            </div>
           </div>
 
           <div className="messages" ref={chatRef} aria-live="polite">
@@ -116,9 +125,9 @@ export default function Tutor() {
               <article className="message tutor-message loading-message">
                 <div className="message-meta">
                   <span className="message-name">PathshalaAI</span>
-                  <span className="message-time">Demo</span>
+                  <span className="message-time">Thinking</span>
                 </div>
-                <p className="message-text">Preparing demo response</p>
+                <p className="message-text">PathshalaAI is thinking...</p>
               </article>
             )}
           </div>
