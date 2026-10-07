@@ -9,6 +9,7 @@ import "./styles/tutor.css";
 import "./styles/quiz.css";
 import "./styles/progress.css";
 import "./styles/notes.css";
+import "./styles/ai-roadmap.css";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -104,7 +104,7 @@ export default function Tutor() {
               </h2>
             </div>
             <div className="chat-header-actions">
-              <span className="engine-status">AI Engine: Local SLM — Integration Ready</span>
+              <span className="engine-status">AI Engine: Local Demo + SLM Ready</span>
               <span className="chapter-pill">Chapter: {selection.chapter}</span>
             </div>
           </div>
