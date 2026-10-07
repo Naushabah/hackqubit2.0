@@ -1,0 +1,145 @@
+.tutor-layout {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.control-card {
+  padding: var(--space-3);
+}
+
+.chat-card {
+  display: grid;
+  overflow: hidden;
+  grid-template-rows: auto minmax(390px, 56vh) auto;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface-soft);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.chat-label,
+.message-name,
+.message-time {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.chapter-pill {
+  max-width: 44%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  overflow-y: auto;
+  padding: var(--space-3);
+  scroll-behavior: smooth;
+}
+
+.empty-state {
+  max-width: 320px;
+  margin: auto;
+  padding: var(--space-4);
+  text-align: center;
+  background: var(--color-surface-soft);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.message {
+  display: grid;
+  gap: 0.25rem;
+  max-width: 88%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+.tutor-message {
+  align-self: flex-start;
+  background: var(--color-surface-soft);
+}
+
+.user-message {
+  align-self: flex-end;
+  color: #ffffff;
+  background: var(--color-primary);
+}
+
+.user-message .message-name,
+.user-message .message-time,
+.user-message .message-text {
+  color: #ffffff;
+}
+
+.message-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.message-text {
+  margin-bottom: 0;
+}
+
+.loading-message .message-text::after {
+  content: "";
+  display: inline-block;
+  width: 1.1rem;
+  height: 0.35rem;
+  margin-left: 0.25rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-primary), transparent);
+  animation: pulse 900ms ease-in-out infinite;
+}
+
+.question-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.ask-button {
+  min-width: 78px;
+  padding: 0 1rem;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (min-width: 980px) {
+  .tutor-layout {
+    grid-template-columns: 310px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .control-card {
+    position: sticky;
+    top: 112px;
+  }
+
+  .chat-card {
+    grid-template-rows: auto minmax(470px, 62vh) auto;
+  }
+}
