@@ -26,9 +26,6 @@ export default function Home() {
             <Link className="button secondary-button" to="/quiz">
               Take a Quiz
             </Link>
-            <Link className="button ghost-button" to="/ai-roadmap">
-              View AI Plan
-            </Link>
           </div>
         </div>
 

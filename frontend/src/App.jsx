@@ -6,7 +6,6 @@ import Tutor from "./pages/Tutor.jsx";
 import Quiz from "./pages/Quiz.jsx";
 import Progress from "./pages/Progress.jsx";
 import Notes from "./pages/Notes.jsx";
-import AIRoadmap from "./pages/AIRoadmap.jsx";
 
 function NotFound() {
   return (
@@ -31,7 +30,6 @@ export default function App() {
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/progress" element={<Progress />} />
           <Route path="/notes" element={<Notes />} />
-          <Route path="/ai-roadmap" element={<AIRoadmap />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
