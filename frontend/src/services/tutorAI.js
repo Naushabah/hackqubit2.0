@@ -77,30 +77,49 @@ export async function askTutor({
     throw new Error("Please enter a question before asking PathshalaAI.");
   }
 
-  const prompt = buildTutorPrompt({
-    className,
-    subject,
-    chapter,
-    question: cleanQuestion,
-  });
-
   try {
-    // This is the architecture boundary where a real quantized SLM will be plugged in.
-    // The eventual local model runtime should receive the composed prompt and return a
-    // plain-text instructional response.
-    const response = await adapter.generateResponse({
-      prompt,
-      maxTokens: 350,
-      temperature: 0.25,
+    const response = await fetch("/api/tutor/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question: cleanQuestion,
+        classLevel: className,
+        subject,
+        chapter,
+      }),
     });
 
-    return String(response || "").trim();
+    if (response.ok) {
+      const data = await response.json();
+      return String(data.answer || "").trim();
+    }
+
+    throw new Error("Backend response was not successful.");
   } catch (error) {
-    return buildLocalDemoAnswer({
-      question: cleanQuestion,
+    const prompt = buildTutorPrompt({
       className,
       subject,
       chapter,
+      question: cleanQuestion,
     });
+
+    try {
+      const response = await adapter.generateResponse({
+        prompt,
+        maxTokens: 350,
+        temperature: 0.25,
+      });
+
+      return String(response || "").trim();
+    } catch (fallbackError) {
+      return buildLocalDemoAnswer({
+        question: cleanQuestion,
+        className,
+        subject,
+        chapter,
+      });
+    }
   }
 }
